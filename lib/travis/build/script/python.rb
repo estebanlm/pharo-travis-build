@@ -40,6 +40,8 @@ module Travis
         end
 
         def install
+          setup_cache unless data.cache[:setup_cache]
+
           sh.if '-f Requirements.txt' do
             sh.cmd 'pip install -r Requirements.txt', fold: 'install', retry: true
           end

@@ -74,6 +74,14 @@ describe Travis::Build::Script::Python, :sexp do
     it 'adds $HOME/.cache/pip to directory cache' do
       should include_sexp [:cmd, 'rvm 1.9.3 --fuzzy do $CASHER_DIR/bin/casher add $HOME/.cache/pip', assert: true, timing: true]
     end
+
+    context 'when setup_cache is set' do
+      it 'receives #setup_cache' do
+        data[:config][:cache] = { pip: true, setup_cache: true }
+        script.expects(:setup_cache)
+        script.sexp
+      end
+    end
   end
 
   it 'sets up python with system site packages enabled' do

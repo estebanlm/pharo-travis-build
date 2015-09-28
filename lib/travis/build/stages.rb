@@ -8,7 +8,7 @@ module Travis
   module Build
     class Stages
       STAGES = [
-        :builtin,     [:header, :configure, :checkout, :prepare, :disable_sudo, :export, :setup, :announce, :setup_cache],
+        :builtin,     [:header, :configure, :checkout, :prepare, :disable_sudo, :export, :setup, :announce],
         :custom,      [:before_install, :install, :before_script, :script, :before_cache],
         :builtin,     [:cache],
         :conditional, [:after_success],
@@ -23,7 +23,6 @@ module Travis
         export:         { assert: false, echo: false, timing: false },
         setup:          { assert: true,  echo: true,  timing: true  },
         announce:       { assert: false, echo: true,  timing: false },
-        setup_cache:    { assert: true,  echo: true,  timing: true  },
         before_install: { assert: true,  echo: true,  timing: true  },
         install:        { assert: true,  echo: true,  timing: true  },
         before_script:  { assert: true,  echo: true,  timing: true  },
@@ -49,6 +48,10 @@ module Travis
       end
 
       def run
+        if config[:cache] && config[:cache].is_a?(Hash) && config[:cache][:setup_cache]
+          STAGES[1].tap {|x| puts x.inspect } << :setup_cache
+          STAGE_DEFAULT_OPTIONS.merge!({setup_cache:{ assert: true,  echo: true,  timing: true  }})
+        end
         STAGES.each_slice(2) do |type, names|
           names.each { |name| run_stage(type, name) }
         end

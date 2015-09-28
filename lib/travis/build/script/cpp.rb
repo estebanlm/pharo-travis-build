@@ -31,6 +31,12 @@ module Travis
           end
         end
 
+        def install
+          setup_cache unless data.cache[:setup_cache]
+
+          super
+        end
+
         def use_directory_cache?
           super || data.cache?(:ccache)
         end

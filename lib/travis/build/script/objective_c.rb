@@ -45,7 +45,8 @@ module Travis
         end
 
         def setup_cache
-          super
+          super unless data.cache[:setup_cache]
+
           sh.if podfile? do
             directory_cache.add("#{pod_dir}/Pods") if data.cache?(:cocoapods)
           end

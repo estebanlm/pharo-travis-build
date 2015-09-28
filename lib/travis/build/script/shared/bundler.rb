@@ -35,6 +35,11 @@ module Travis
           end
         end
 
+        def install
+          setup_cache unless data.cache[:setup_cache]
+          super
+        end
+
         def prepare_cache
           sh.cmd 'bundle clean', assert: false, timing: false if bundler_path and data.cache?(:bundler)
         end
